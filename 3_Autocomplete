@@ -1,0 +1,115 @@
+// ทดสอบ Test On This Website -> https://dotnetfiddle.net/
+
+using System;
+					
+public class Program
+{
+	public static void Main()
+	{
+		string x = "";
+		string[] items = {"Mother", "Think", "Worthy", "Apple", "Android"};
+		int maxResult = 5;
+		
+		//test
+		string[] result = autocomplete("th", items, maxResult);
+		Console.Write(" \"th\" : ");
+		Console.WriteLine(string.Join(", ", result));
+		do
+		{
+			Console.Write("กรอกข้อความ (พิมพ์ exit เพื่อออก): ");
+			x = Console.ReadLine();
+			
+			if (x.ToLower() == "exit")
+                break;
+
+			Console.Write(" \"" + x + "\" : ");
+			result = autocomplete(x, items, maxResult);
+
+			Console.WriteLine(string.Join(", ", result));
+		} while (true);
+	}
+	
+	public static string[] autocomplete(string search, string[] items, int maxResult)
+	{
+		// แนวคิด substr char loop ค้นหาใน items แล้วเอามาโชว์ จำเป็นต้องการใช้ ConsoleKeyInfo เพื่อสามารถแสดง autocomplete ในขณะที่พิมพ์ X
+		// หลักการ IndexOf คือหัวใจสำคัญ ไม่งั้น items["abc", "xyz', "กขค"] ต้องแยกเป็น 1,2,3 เหลือแค่ a,b,c แล้วสร้าง char[] search th เป็น 0=t h=1 แยก input มาเทียบ t=a, t=b ถ้าเจอก็ เช็คถัด b ควรเป็น h ไม่ใช่ก็หาต่อจนครบทั้ง 2 จึงเก็บ index ของ string ที่เก็บทั้ง "abc" ทำซํ้าได้ครบ
+		//Console.WriteLine(search);
+		//Console.WriteLine(string.Join(", ", items));
+		//Console.WriteLine(maxResult);
+		
+		string[] x = new string[items.Length];
+		int[] x_index = new int[items.Length];
+    	int count = 0;
+		
+		// clean data ก่อน ดึงเฉพาะที่มีใน input
+		for (int i = 0; i < items.Length; i++)
+        {
+            string itemLower = items[i].ToLower();
+			//int idx = itemLower.IndexOf(search.ToLower());
+			int idx = -1; // ค่าเริ่มต้น = ไม่เจอ
+			string items_temp = items[i].ToLower();
+			string search_temp = search.ToLower();
+
+			for (int j = 0; j <= items_temp.Length - search_temp.Length; j++) // เช็คตาม size search
+			{
+				bool found = true;
+				for (int k = 0; k < search_temp.Length; k++)
+				{
+					if (items_temp[j + k] != search_temp[k])
+					{
+						found = false;
+						break;
+					}
+				}
+				if (found)
+				{
+					idx = j;
+					break;
+				}
+			}
+
+			if (idx >= 0)
+			{
+				//Console.WriteLine(items[i]);
+				x[count] = items[i];
+				x_index[count] = idx;
+				count++;
+			}
+        }
+		
+		// sort ตาม index ใครเจอ th ก่อน
+		for (int i = 0; i < count - 1; i++)
+		{
+			for (int j = i + 1; j < count; j++)
+			{
+				if (x_index[i] > x_index[j])
+				{
+					// สลับตำแหน่ง index
+					int tempIndex = x_index[i];
+					x_index[i] = x_index[j];
+					x_index[j] = tempIndex;
+
+					// สลับคำใน matchedWords ด้วย
+					string tempWord = x[i];
+					x[i] = x[j];
+					x[j] = tempWord;
+				}
+			}
+		}
+		
+		// ตัด array ตาม maxResult
+		int new_count = 0;
+		if (maxResult < count)
+			new_count = maxResult;
+		if (count <= maxResult)
+			new_count = count;
+
+		string[] y = new string[new_count];
+		
+		for (int i = 0; i < new_count; i++)
+		{
+			y[i] = x[i];
+		}
+        return y;
+	}
+}
