@@ -1,0 +1,563 @@
+// ทดสอบ Test On This Website -> https://dotnetfiddle.net/
+
+using System;
+					
+public class Program
+{
+	public static void Main()
+	{
+		string x;
+		
+		/******************** อันนี้เช็ค input อันไหน int อันไหน string แต่เช็คผสม 123abc ไม่ได้
+		if (int.TryParse(x, out int number))
+		{
+			Console.WriteLine("เป็น int: " + number);
+		}
+		else
+		{
+			Console.WriteLine("เป็น string: " + x);
+		}
+		********************/
+		
+		Console.WriteLine("////////// กรณีถูกต้อง (อักษร) //////////");
+
+		// ประเภท 1: ตัวเดี่ยว
+		Console.WriteLine("////////// ประเภท กรณี 1 ตัวเดี่ยว");
+		Console.WriteLine("1. I => " + StringToInt("I"));   // 1
+		Console.WriteLine("2. V => " + StringToInt("V"));   // 5
+		Console.WriteLine("3. X => " + StringToInt("X"));   // 10
+		Console.WriteLine("4. L => " + StringToInt("L"));   // 50
+		Console.WriteLine("5. C => " + StringToInt("C"));   // 100
+		Console.WriteLine("6. D => " + StringToInt("D"));   // 500
+		Console.WriteLine("7. M => " + StringToInt("M"));   // 1000
+
+		// ประเภท 2: ตัวอักษรซ้ำ ≤3
+		Console.WriteLine("////////// ประเภท กรณี ตัวอักษรซ้ำ ≤3");
+		Console.WriteLine("8. II => " + StringToInt("II"));     // 2
+		Console.WriteLine("9. III => " + StringToInt("III"));   // 3
+		Console.WriteLine("10. XX => " + StringToInt("XX"));    // 20
+		Console.WriteLine("11. XXX => " + StringToInt("XXX"));  // 30
+		Console.WriteLine("12. CC => " + StringToInt("CC"));    // 200
+		Console.WriteLine("13. CCC => " + StringToInt("CCC"));  // 300
+		Console.WriteLine("14. MM => " + StringToInt("MM"));    // 200
+		Console.WriteLine("15. MMM => " + StringToInt("MMM"));  // 3000
+
+		// ประเภท 3: ลบหน้า 1 ตัว
+		Console.WriteLine("////////// ประเภท กรณี ลบหน้า 1 ตัว");
+		Console.WriteLine("16. IV => " + StringToInt("IV"));    // 4
+		Console.WriteLine("17. IX => " + StringToInt("IX"));    // 9
+		Console.WriteLine("18. XL => " + StringToInt("XL"));    // 40
+		Console.WriteLine("19. XC => " + StringToInt("XC"));    // 90
+		Console.WriteLine("20. CD => " + StringToInt("CD"));    // 400
+		Console.WriteLine("21. CM => " + StringToInt("CM"));    // 900
+
+		// ประเภท 4: บวกหลังหลายตัว
+		Console.WriteLine("////////// ประเภท กรณี บวกหลังหลายตัว");
+		Console.WriteLine("22. VI => " + StringToInt("VI"));    // 6
+		Console.WriteLine("23. VII => " + StringToInt("VII"));  // 7
+		Console.WriteLine("24. VIII => " + StringToInt("VIII"));// 8
+		Console.WriteLine("25. XI => " + StringToInt("XI"));    // 11
+		Console.WriteLine("26. XII => " + StringToInt("XII"));  // 12
+		Console.WriteLine("27. XIII => " + StringToInt("XIII"));// 13
+		Console.WriteLine("28. XIX => " + StringToInt("XIX"));  // 19
+		Console.WriteLine("29. XLIX => " + StringToInt("XLIX"));// 49
+		Console.WriteLine("30. XCIX => " + StringToInt("XCIX"));// 99
+
+		// ประเภท 5: จำนวนใหญ่
+		Console.WriteLine("////////// ประเภท กรณี จำนวนใหญ่");
+		Console.WriteLine("31. M => " + StringToInt("M"));       // 1000
+		Console.WriteLine("32. MM => " + StringToInt("MM"));     // 2000
+		Console.WriteLine("33. MMM => " + StringToInt("MMM"));   // 3000
+		
+		Console.WriteLine("********************************");
+		
+		Console.WriteLine("////////// กรณีผิดพลาด (อักษร) //////////");
+
+		// ประเภท 1: ตัวอักษรไม่ถูกต้อง
+		Console.WriteLine("////////// ประเภท ตัวอักษรไม่ถูกต้อง");
+		Console.WriteLine("1. A => " + StringToInt("A"));       // ผิด ตัวอักษรไม่ใช่โรมัน
+		Console.WriteLine("2. ก => " + StringToInt("ก"));       // ผิด
+
+		// ประเภท 2: ตัวอักษรซ้ำเกิน 3
+		Console.WriteLine("////////// ประเภท ตัวอักษรซ้ำเกิน 3");
+		Console.WriteLine("3. IIII => " + StringToInt("IIII"));   // ผิด
+		Console.WriteLine("4. XXXX => " + StringToInt("XXXX"));   // ผิด
+		Console.WriteLine("5. CCCC => " + StringToInt("CCCC"));   // ผิด
+		Console.WriteLine("6. MMMM => " + StringToInt("MMMM"));   // ผิด
+
+		// ประเภท 3: V, L, D ซ้ำ
+		Console.WriteLine("////////// ประเภท V, L, D ซ้ำ");
+		Console.WriteLine("7. VV => " + StringToInt("VV"));       // ผิด
+		Console.WriteLine("8. LL => " + StringToInt("LL"));       // ผิด
+		Console.WriteLine("9. DD => " + StringToInt("DD"));       // ผิด
+
+		// ประเภท 4: ลบมากกว่า 1 ตัว / ลบผิดคู่
+		Console.WriteLine("////////// ประเภท ลบมากกว่า 1 ตัว หรือ ลบผิดคู่");
+		Console.WriteLine("10. IIX => " + StringToInt("IIX"));     // ผิด
+		Console.WriteLine("11. IC => " + StringToInt("IC"));       // ผิด
+		Console.WriteLine("12. IL => " + StringToInt("IL"));       // ผิด
+		Console.WriteLine("13. VX => " + StringToInt("VX"));       // ผิด
+		Console.WriteLine("14. LC => " + StringToInt("LC"));       // ผิด
+		Console.WriteLine("15. DM => " + StringToInt("DM"));       // ผิด
+
+		// ประเภท 5: เรียงลำดับผิด
+		Console.WriteLine("////////// ประเภท เรียงลำดับผิด");
+		Console.WriteLine("16. XIXI => " + StringToInt("XIXI"));     // ผิด
+		Console.WriteLine("17. CCXLX => " + StringToInt("CCXLX"));   // ผิด
+		Console.WriteLine("18. CCCLXXXXIX => " + StringToInt("CCCLXXXXIX")); // ผิด
+
+		// ประเภท 6: เกิน 3999
+		Console.WriteLine("////////// ประเภท เกิน 3999");
+		Console.WriteLine("19. MMMM => " + StringToInt("MMMM"));    // ผิด
+		Console.WriteLine("20. MMMMM => " + StringToInt("MMMMM"));  // ผิด
+
+		// ประเภท 7: สลับตัวเลขผิด
+		Console.WriteLine("////////// ประเภท สลับตัวเลขผิด");
+		Console.WriteLine("21. VXIV => " + StringToInt("VXIV"));   // ผิด
+		Console.WriteLine("22. LCIX => " + StringToInt("LCIX"));   // ผิด
+
+		Console.WriteLine("*******************************************************************************************************************");
+		
+		Console.WriteLine("////////// กรณีถูกต้อง (ตัวเลข) //////////");
+
+		// ประเภท 1: ตัวเลขพื้นฐาน
+		Console.WriteLine("1. 1 => " + IntToString(1));     // I
+		Console.WriteLine("2. 5 => " + IntToString(5));     // V
+		Console.WriteLine("3. 10 => " + IntToString(10));   // X
+		Console.WriteLine("4. 50 => " + IntToString(50));   // L
+		Console.WriteLine("5. 100 => " + IntToString(100)); // C
+		Console.WriteLine("6. 500 => " + IntToString(500)); // D
+		Console.WriteLine("7. 1000 => " + IntToString(1000));// M
+
+		// ประเภท 2: ตัวเลขซ้ำ
+		Console.WriteLine("////////// ประเภท ตัวเลขซ้ำ");
+		Console.WriteLine("8. 2 => " + IntToString(2));     // II
+		Console.WriteLine("9. 3 => " + IntToString(3));     // III
+		Console.WriteLine("10. 20 => " + IntToString(20));  // XX
+		Console.WriteLine("11. 30 => " + IntToString(30));  // XXX
+		Console.WriteLine("12. 300 => " + IntToString(300));// CCC
+		Console.WriteLine("13. 3000 => " + IntToString(3000));// MMM
+
+		// ประเภท 3: ลบหน้า 1 ตัว
+		Console.WriteLine("////////// ประเภท ลบหน้า 1 ตัว");
+		Console.WriteLine("14. 4 => " + IntToString(4));     // IV
+		Console.WriteLine("15. 9 => " + IntToString(9));     // IX
+		Console.WriteLine("16. 40 => " + IntToString(40));   // XL
+		Console.WriteLine("17. 90 => " + IntToString(90));   // XC
+		Console.WriteLine("18. 400 => " + IntToString(400)); // CD
+		Console.WriteLine("19. 900 => " + IntToString(900)); // CM
+
+		// ประเภท 4: ผสมหลายตำแหน่ง
+		Console.WriteLine("////////// ประเภท ผสมหลายตำแหน่ง");
+		Console.WriteLine("20. 6 => " + IntToString(6));     // VI
+		Console.WriteLine("21. 14 => " + IntToString(14));   // XIV
+		Console.WriteLine("22. 19 => " + IntToString(19));   // XIX
+		Console.WriteLine("23. 49 => " + IntToString(49));   // XLIX
+		Console.WriteLine("24. 99 => " + IntToString(99));   // XCIX
+		Console.WriteLine("25. 888 => " + IntToString(888)); // DCCCLXXXVIII
+		Console.WriteLine("26. 1989 => " + IntToString(1989));// MCMLXXXIX
+		Console.WriteLine("27. 3999 => " + IntToString(3999));// MMMCMXCIX
+
+		Console.WriteLine("********************************");
+		Console.WriteLine("////////// กรณีผิดพลาด (ตัวเลข) //////////");
+
+		// ประเภท 1: เลข 0 หรือ ติดลบ
+		Console.WriteLine("1. 0 => " + IntToString(0));       // ผิด
+		Console.WriteLine("2. -1 => " + IntToString(-1));    // ผิด
+
+		// ประเภท 2: เกิน 9999
+		Console.WriteLine("////////// ประเภท เกิน 9999");
+		Console.WriteLine("3. 10000 => " + IntToString(10000));// ผิด ไม่ได้ทำดักไว้
+
+		// ประเภท 3: ค่าไม่สมเหตุสมผล
+		Console.WriteLine("////////// ประเภท ค่าไม่สมเหตุสมผล");
+		Console.WriteLine("4. int.MinValue => " + IntToString(int.MinValue)); // ผิด
+		Console.WriteLine("5. int.MaxValue => " + IntToString(int.MaxValue)); // ผิด
+
+
+		do
+		{
+			bool hasLetter = false;
+			bool hasDigit = false;
+			Console.Write("กรอกข้อความ (พิมพ์ exit เพื่อออก): ");
+			x = Console.ReadLine();
+			
+			if (x.ToLower() == "exit")
+                break;
+
+			foreach (char c in x)
+			{
+				if (char.IsDigit(c)) hasDigit = true;
+				if (char.IsLetter(c)) hasLetter = true;
+			}
+
+			if (hasDigit && hasLetter)
+			{
+				Console.WriteLine("ปนทั้งตัวเลขและตัวอักษร");
+			}
+			else if (hasDigit)
+			{
+				Console.WriteLine("เป็นตัวเลขล้วน");
+				Console.WriteLine(x + " => " + IntToString(Int32.Parse(x)));
+			}
+			else
+			{
+				Console.WriteLine("เป็นตัวอักษรล้วน");
+				int z = StringToInt(x);
+				if (z <= 0)
+				{
+					Console.WriteLine(x + " => false");
+				} else {
+					Console.WriteLine(x + " => " + z);
+				}
+			}
+			Console.WriteLine();
+		} while (true);
+	}
+	
+	public static string IntToString(int x)
+	{
+		string y = "";
+		int temp = 0;
+		// เอาแนวคิดจาก StringToInt แต่เป็น if mod แบ่ง ถ้า 189 ก็เป็น 100, 80, 9 แปลงค่า 100->C, 80->LXXX, 9->IX
+		if (x % 10000 != 0)
+		{
+			temp = x / 1000;
+			if (temp != 0)
+			{
+				if (temp > 9)
+					return "false";
+				if (temp == 9)
+					y += "(IX)";
+				if (temp == 8)
+					y += "(VIII)";
+				if (temp == 7)
+					y += "(VII)";
+				if (temp == 6)
+					y += "(VI)";
+				if (temp == 5)
+					y += "(V)";
+				if (temp == 4)
+					y += "(IV)";
+				if (temp == 3)
+					y += "MMM";
+				if (temp == 2)
+					y += "MM";
+				if (temp == 1)
+					y += "M";
+			}
+		}
+		temp = x % 1000;
+		//Console.WriteLine("1000: " + temp);
+		if (temp % 1000 != 0)
+		{
+			temp = temp / 100;
+			if (temp != 0)
+			{
+				if (temp > 9)
+					return "false";
+				if (temp == 9)
+					y += "CM";
+				if (temp == 8)
+					y += "DCCC";
+				if (temp == 7)
+					y += "DCC";
+				if (temp == 6)
+					y += "DC";
+				if (temp == 5)
+					y += "D";
+				if (temp == 4)
+					y += "CD";
+				if (temp == 3)
+					y += "CCC";
+				if (temp == 2)
+					y += "CC";
+				if (temp == 1)
+					y += "C";
+			}
+		}
+		temp = x % 100;
+		//Console.WriteLine("100: " + temp);
+		if (temp % 100 != 0)
+		{
+			temp = temp / 10;
+			if (temp != 0)
+			{
+				if (temp > 9)
+					return "false";
+				if (temp == 9)
+					y += "XC";
+				if (temp == 8)
+					y += "LXXX";
+				if (temp == 7)
+					y += "LXX";
+				if (temp == 6)
+					y += "LX";
+				if (temp == 5)
+					y += "L";
+				if (temp == 4)
+					y += "XL";
+				if (temp == 3)
+					y += "XXX";
+				if (temp == 2)
+					y += "XX";
+				if (temp == 1)
+					y += "X";
+			}
+		}
+		temp = x % 10;
+		//Console.WriteLine("10: " + temp);
+		if (temp % 10 != 0)
+		{
+			temp = temp / 1;
+			if (temp != 0)
+			{
+				if (temp == 9)
+					y += "IX";
+				if (temp == 8)
+					y += "VIII";
+				if (temp == 7)
+					y += "VII";
+				if (temp == 6)
+					y += "VI";
+				if (temp == 5)
+					y += "V";
+				if (temp == 4)
+					y += "IV";
+				if (temp == 3)
+					y += "III";
+				if (temp == 2)
+					y += "II";
+				if (temp == 1)
+					y += "I";
+			}
+			//Console.WriteLine("1: " + temp);
+		}
+		if (y == "")
+			y = "false";
+		return y;
+	}
+	
+	public static int StringToInt(String x)
+	{
+		int y = 0;
+		int sum = 0;
+		int temp = 0;
+		int temp_count = 1;
+		/*
+		var format = new Dictionary<char, int>
+		{
+			{ 'I', 1 },
+			{ 'V', 5 },
+			{ 'X', 10 },
+			{ 'L', 50 },
+			{ 'C', 100 },
+			{ 'D', 500 },
+			{ 'M', 1000 }
+		};
+		*/
+		
+		/* for เช็ค x == key ถ้าตรงก็ y = value แต่ถ้าไม่ตรงเช่น sqe ข้ามไป กรณีที่ III ก็ sum += value ก็ควรได้เป็น sum == 3 แล้วเอาไป y = sum
+		*  เพิ่มเติม: ลืมเช็ค ตำแหน่ง ถ้า IIV ไม่ควรมีจริง หรือ IV = 4 ไม่ใช่ 6 ดังนั้นจะใช้ if เช็คโดยเรียงลำดับจากมากไปน้อย เพราะโรมันเรียงจากมากไปน้อยเช่นกัน
+		*  ยกตัวอย่าง 
+		*    กรณี ปกติ       XII        โดย X เก็บ 10 เจอ I เก็บ 1 เป็น 11 เจอ I เก็บอีก 1 เป็น 12 return
+		*                              ดังนั้น จำเป็นต้องประกาศตัวแปร ไว้บวกเลข คือ 'sum'
+		*    กรณี ซับซ้อน 1  CIX        โดย C เก็บ 100 เช็คตำแหน่งถัดไป I เก็บเป็น 101 เจอ X เก็บเป็น 111 ซึ่งผิด
+		*                              จำเป็นต้องเช็ค ปกติ > ต้อง + หากน้อยกว่า I<X ให้ - ควรเป็น 1 เก็บค่าไว้ เจอ X มากกว่า ทำการลบ 1-10 เป็น 109 retrun
+		*                              ดังนั้น จำเป็นต้องประกาศตัวแปร ไว้ลบเลข คือ 'temp'
+		*    กรณี ซับซ้อน 2  MCMLXXXIX   โดย M 1000 C<M 1900 M>L เช็คตัวซํ้าจำเป็นต้องกระโดดข้ามหลัง C>M -> L>X 1950 X==X เหมือนกันให้บวก 20 X>I 10 เป็น 1980 I<X 1989 retrun
+		*                              ดังนั้น จำเป็นต้องประกาตัวแปร ไว้เช็คตัวซํ้า คือ 'temp_count'
+		*    กรณี ไม่มีจริง    IXIIV       โดย I น้อยกว่า X เก็บ 9 I==I 2 จะนำไปบวก 9 ทำให้เป็น 11 ซึ่งผิดจาก IXII -> XI มี 2 กรณีคือไม่แสดง หรือแสดงเป็น 9, 2
+		*                              หากเลือกแสดง กรณี I>X หากเจอ I อีก ไม่มีอะไรน้อยกว่า I ให้แยกทำใหม่เป็น I==I 2 เจอ V โรมันไม่อนุญาตลบมากกว่า 1 ตัว ก็แยกเป็น 9, 2, 5
+		*                              ดังนั้น จำเป็นต้องกำกับด้วย if temp < โรมัน เพราะกำหนดกรอบการลบหรือบวก
+		*/
+		for (int i = 0; i < x.Length; i++)
+		{
+			switch (x[i])
+			{
+				case 'M':
+					//Console.WriteLine("ทำ action สำหรับ M");
+					if (temp != 1000)
+						temp_count = 0;
+					if (temp == 1000)
+					{
+						temp_count += 1;
+					}
+					if (temp_count >= 3)
+						return -1;
+						//Console.WriteLine("I ซํ้าเกิน 3 ครั้ง **ผิดกฏ**");
+					if (temp < 1000 && temp != 0)
+					{
+						if (temp == 500)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (D ก่อน M) **ผิดกฏ**");
+						//if (temp == 100)
+							//Console.WriteLine("- " + temp*2 + " (C ก่อน M)");
+						if (temp == 50)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (L ก่อน M) **ผิดกฏ**");
+						if (temp == 10)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (X ก่อน M) **ผิดกฏ**");
+						if (temp == 5)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (V ก่อน M) **ผิดกฏ**");
+						if (temp == 1)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (I ก่อน M) **ผิดกฏ**");
+						sum -= temp*2;
+					}
+					//Console.WriteLine("temp: " + temp);
+					//Console.WriteLine("+ 1000");
+					sum += 1000;
+					temp = 1000;
+					break;
+				case 'D':
+					//Console.WriteLine("ทำ action สำหรับ D");
+					if (temp != 500)
+							temp_count = 0;
+					if (temp == 500)
+						//Console.WriteLine("D ซํ้าเกิน 1 ครั้ง **ผิดกฏ**");
+						return -1;
+					if (temp <= 500 && temp != 0)
+					{
+						//if (temp == 100)
+							//Console.WriteLine("- " + temp*2 + " (C ก่อน D)");
+						if (temp == 50)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (L ก่อน D) **ผิดกฏ**");
+						if (temp == 10)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (X ก่อน D) **ผิดกฏ**");
+						if (temp == 5)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (V ก่อน D) **ผิดกฏ**");
+						if (temp == 1)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (I ก่อน D) **ผิดกฏ**");
+						sum -= temp*2;
+					}
+					//Console.WriteLine("+ 500");
+					sum += 500;
+					temp = 500;
+					break;
+				case 'C':
+					//Console.WriteLine("ทำ action สำหรับ C");
+					if (temp != 100)
+						temp_count = 0;
+					if (temp == 100)
+						temp_count += 1;
+					if (temp_count >= 3)
+						return -1;
+					//Console.WriteLine("I ซํ้าเกิน 3 ครั้ง **ผิดกฏ**");
+					if (temp < 100 && temp != 0)
+					{
+						if (temp == 50)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (L ก่อน C) **ผิดกฏ**");
+						//if (temp == 10)
+							//Console.WriteLine("- " + temp*2 + " (X ก่อน C)");
+						if (temp == 5)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (V ก่อน C) **ผิดกฏ**");
+						if (temp == 1)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (I ก่อน C) **ผิดกฏ**");
+						sum -= temp*2;
+					}
+					//Console.WriteLine("+ 100");
+					sum += 100;
+					temp = 100;
+					break;
+				case 'L':
+					//Console.WriteLine("ทำ action สำหรับ L");
+					if (temp != 50)
+						temp_count = 0;
+					//Console.WriteLine(temp + "I ซํ้าเกิน 1 ครั้ง **ผิดกฏ**");
+					if (temp == 50)
+						return -1;
+						//Console.WriteLine("I ซํ้าเกิน 1 ครั้ง **ผิดกฏ**");
+					if (temp < 50 && temp != 0)
+					{
+						//if (temp == 10)
+							//Console.WriteLine("- " + temp*2 + " (X ก่อน L)");
+						if (temp == 5)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (V ก่อน L) **ผิดกฏ**");
+						if (temp == 1)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (I ก่อน L) **ผิดกฏ**");
+						sum -= temp*2;
+					}
+					//Console.WriteLine("+ 50");
+					sum += 50;
+					temp = 50;
+					break;
+				case 'X':
+					//Console.WriteLine("ทำ action สำหรับ X");
+					if (temp == 1 && temp_count >= 1)
+						return -1;
+						//Console.WriteLine("- " + temp*2 + " (I ก่อน X)");
+					if (temp != 10)
+						temp_count = 0;
+					if (temp == 10)
+						temp_count += 1;
+					if (temp_count >= 3)
+						return -1;
+					if (temp < 10 && temp != 0)
+					{
+							//Console.WriteLine("I ซํ้าเกิน 3 ครั้ง **ผิดกฏ**");
+						if (temp == 5)
+							return -1;
+							//Console.WriteLine("- " + temp*2 + " (V ก่อน X)");
+						sum -= temp*2;
+					}
+					//Console.WriteLine("+ 10");
+					sum += 10;
+					temp = 10;
+					break;
+				case 'V':
+					//Console.WriteLine("ทำ action สำหรับ V");
+					if (temp != 5)
+						temp_count = 0;
+					if (temp == 5)
+					{
+						//Console.WriteLine("I ซํ้าเกิน 1 ครั้ง **ผิดกฏ**");
+						return -1;
+					}
+					if (temp < 5 && temp != 0)
+					{
+						//Console.WriteLine("- " + temp*2 + " (I ก่อน V)");
+						sum -= temp*2;
+					}
+					//Console.WriteLine("+ 5");
+					sum += 5;
+					temp = 5;
+					break;
+				case 'I':
+					//Console.WriteLine("ทำ action สำหรับ I");
+					//Console.WriteLine("temp: " + temp);
+					if (temp != 1)
+						temp_count = 0;
+					if (temp == 1)
+						temp_count += 1;
+					if (temp_count >= 3)
+						return -1;
+						//Console.WriteLine("I ซํ้าเกิน 3 ครั้ง **ผิดกฏ**");
+					//Console.WriteLine("+ 1");
+					//Console.WriteLine("count: " + temp_count);
+					sum += 1;
+					temp = 1;
+					break;
+				default:
+					//Console.Write("ค่าผิดแปลก");
+					return -1;
+			}
+			//Console.WriteLine("= " + sum); ผลลัพธ์รวม
+		}
+		
+		y = sum;
+		
+		return y;
+	}
+}
