@@ -1,0 +1,97 @@
+// ทดสอบ Test On This Website -> https://dotnetfiddle.net/
+
+using System;
+					
+public class Program
+{
+	public static void Main()
+	{
+		String x = "";
+		x = Console.ReadLine();
+		if (int.TryParse(x, out int number))
+		{
+			//Console.WriteLine("เป็น int: " + number);
+			if (number < 0)
+			number *= -1;
+			//Console.WriteLine(PositiveInt(number, x.Length));
+		}
+		else
+		{
+			int y = 0;
+			//Console.WriteLine("เป็น string: " + x);
+			foreach (char c in x.ToLower())
+			{
+				if (c >= 'a' && c <= 'z')
+				{
+					int num = c - 'a' + 1;
+					if (num < 10)
+						y = y * 10 + num;
+					else
+						y = y * 100 + num;
+				}
+				else if (c >= 'ก' && c <= 'ฮ')
+				{
+					int num = c - 'ก' + 1;
+					if (num < 10)
+						y = y * 10 + num;
+					else
+						y = y * 100 + num; 
+				}
+				else if (c >= '0' && c <= '9')
+				{
+					y = y * 10 + (c - '0');
+				}
+				else
+				{
+					//Console.WriteLine("ไม่ใช่ตัวอักษรหรือตัวเลข: " + y);
+				}
+			}
+			//Console.WriteLine("รวมตัวเลข: " + y);
+			//Console.WriteLine("เรียงเลขโดดจากมากไปน้อย: " + PositiveInt(y, y.ToString().Length));
+		}
+		
+	}
+	
+	public static int PositiveInt(int x, int size)
+	{
+		/*
+		* แนวคิด: รับ 0123456789 แยกเป็นเลขโดด 0,1,2,3,4,5,6,7,8,9 เช็คค่า -> สลับค่า -> โชว์
+		* หลักการ: วิธีการเทียบค่า loop ซ้อน loop คงไม่ดี เราจะรู้ได้อย่างไรว่าค่าใดมีค่าเท่าไหร่ เนื่องจากเป็นเลขโดด จึงมีแค่ 0-9
+		*          ดังนั้นสร้าง template 0-9 แล้วนำค่ามาเช็คแบบ Binary Search X
+		*		   ดังนั้นสร้าง template 0 9 หลัก แล้วดึงค่าโดดมากที่สุดมาทำหลักใหม่ 
+		*   กรณี: 111222333 ในกรณีเลขซํ้า จำเป็นต้องการตัวแปรนับเลขซํ้า จะได้ไม่ต้องเช็คซํ้าตอนเรียง
+		*/
+		
+		int[] array = new int[size];
+		int[] checker = {0,0,0,0,0,0,0,0,0,0};
+		//int[] format = {0,1,2,3,4,5,6,7,8,9};
+		int y = x;
+		//Console.WriteLine(y);
+		// เอาค่าใส่ + check หลัก
+		for (int i = 0; i < size; i++)
+		{
+			array[i] = y % 10;
+			
+			checker[array[i]]++;
+			y /= 10;
+			//Console.Write(array[i]);
+		}
+		//Console.WriteLine();
+		// เรียงจากมากไปน้อย
+		y = 0;
+		for (int i = 9; i >= 0; i--)
+		{
+			if (checker[i] == 0)
+				//Console.WriteLine("ข้ามเลขโดด: " + i);
+			while (checker[i] > 0)
+			{
+				//Console.WriteLine("เจอเลขโดด: " + i);
+				y = y * 10 + i; // logic ดันเลข 9-0 กลับเข้าสู่หลักเดิม เช่น 123 ได้ 3 -> 32 -> 321
+				//Console.WriteLine("เลขใหม่: " + y);
+				checker[i]--;
+			}
+		}
+
+		return y;
+	}
+}
