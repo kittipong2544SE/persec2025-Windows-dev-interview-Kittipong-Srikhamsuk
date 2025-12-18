@@ -1,0 +1,344 @@
+// ทดสอบ Test On This Website -> https://dotnetfiddle.net/
+// Version 3.0.0
+
+using System;
+
+public class Program
+{
+    public static void Main()
+    {
+		
+		Console.WriteLine("////////////// TEST //////////////");
+		function("()");
+		function("([]]");
+		function("([{}])");
+		function("([[{}]]]");
+		function(")");
+		function("(]}])");
+		function("([)]");
+		function("{");
+		
+		Console.WriteLine("////////////// TEST CASE //////////////");
+		// Test cases
+        string[] tests =
+        {
+            "()", // กรณี ถูกต้อง แบบที่ 1 คู่เดี่ยว
+            "[[]]", // กรณี ถูกต้อง แบบที่ 2 คู่ซ้อน
+			"[[()]][{}]", // กรณี ถูกต้อง แบบที่ 3 คู่ซ้อนหลายคู่
+			"[()]{}", // กรณี ถูกต้อง แบบที่ 4 คู่ซ้อน + คู่เดี่ยว
+			"()[]{}", // กรณี ถูกต้อง แบบที่ 5 คู่เดี่ยวหลายคู่
+            "(", // กรณี ผิด แบบที่ 6 ข้างเดี่ยว ซ้าย
+            ")", // กรณี ผิด แบบที่ 7 ข้างเดี่ยว ขวา
+            "((", // กรณี ผิด แบบที่ 8 ข้างเดี่ยว คู่ซ้าย
+            "))",// กรณี ผิด แบบที่ 9 ข้างเดี่ยว คู่ขวา
+            "([)]", // กรณี ผิด แบบที่ 10 คู่ซ้อน
+            "[(){}]", // กรณี ถูก แบบที่ 11 คู่เดี่ยวซ้อนคู่
+			"abc()", // กรณี ถูก แบบที่ 12 คู่เดี่ยว + ภาษาอังกฤษ
+			"a(b[c]{d})", // กรณี ถูก แบบที่ 13 คู่ซ้อน + ภาษาอังกฤษ
+			"()กขค", // กรณี ถูก แบบที่ 14 คู่เดี่ยว + ภาษาไทย
+			"[(aก1)b[ข2]{cค}3]", // กรณี ถูก แบบที่ 15 คู่ซ้อน + ภาษาอังกฤษ + ภาษาไทย + เลข
+        };
+
+		int index = 1;
+        foreach (string t in tests)
+        {
+            Console.Write(index + ". ");
+			function(t);
+			index++;
+        }
+
+		
+        string x;
+		while (true) {
+			x = Console.ReadLine();
+			if (x == null) continue;
+			if (x.ToLower() == "exit") break;
+			function(x);
+			Console.WriteLine();
+		}
+    }
+
+    public static void function(string x)
+    {
+        char[] format = { '(', '[', '{', '}', ']', ')' };
+        char[] checker = new char[x.Length];  // เก็บวงเล็บที่เจอ
+        int checker_count = 0;               // ตัวนับจำนวนวงเล็บใน checker
+
+        for (int i = 0; i < x.Length; i++)
+        {
+            char c = x[i];
+
+            // เช็คว่าเป็นวงเล็บเปิด
+            if (c == '(' || c == '[' || c == '{')
+            {
+                checker[checker_count++] = c;  // เก็บใน checker
+            }
+            // เช็คว่าเป็นวงเล็บปิด
+            else if (c == ')' || c == ']' || c == '}')
+            {
+                if (checker_count == 0)  // ไม่มีวงเล็บเปิดมาก่อน → false
+                {
+                    Console.WriteLine("\"" + x + "\" => false");
+                    return;
+                }
+
+                char lastOpen = checker[checker_count - 1];  // วงเล็บเปิดล่าสุด
+                if ((lastOpen == '(' && c == ')') ||
+                    (lastOpen == '[' && c == ']') ||
+                    (lastOpen == '{' && c == '}'))
+                {
+                    checker_count--;  // ปิดถูกต้อง → ลบออก
+                }
+                else
+                {
+                    Console.WriteLine("\"" + x + "\" => false");  // ปิดไม่ตรงคู่
+                    return;
+                }
+            }
+            // ตัวอักษรอื่น → ข้าม
+        }
+
+        // ถ้า checker_count == 0 → ปิดครบทั้งหมด
+        if (checker_count == 0)
+        {
+            Console.WriteLine("\"" + x + "\" => true");
+        }
+        else
+        {
+            Console.WriteLine("\"" + x + "\" => false");
+        }
+    }
+}
+
+
+
+/* Draft 1 ยังไม่เสร็จ เสียดายเก็บไว้
+using System;
+					
+public class Program
+{
+	public static void Main()
+	{
+		string x;
+		x = Console.ReadLine();
+		function(x);
+	}
+	
+	public static void function(string x){
+		char[] format = {'(','[','{','}',']',')'};
+		Console.WriteLine("ขนาด: " + x.Length);
+		Console.WriteLine("mod: " + x.Length % 2);
+		
+		if (x.Length % 2 == 1) {
+			Console.WriteLine("ผิด เพราะต้องเป็นคู่ ถึงจะเปิดปิดครบคู่ ---- กรณี 1");
+			Console.WriteLine("\"" + x + "\" => false");
+			return;
+		}
+		
+		Console.WriteLine("จำนวนคู่: " + x.Length / 2);
+		for (int i = format.Length / 2; i < format.Length; i++) {
+			if (format[i] == x[0]) {
+				Console.WriteLine("ผิด เพราะต้องเปิดก่อนปิด ---- กรณี 2");
+				Console.WriteLine(x[0] + " = " + format[i]);
+				Console.WriteLine("\"" + x + "\" => false");
+				return;
+			}
+		}
+		
+		Console.WriteLine("------- กระบวนการคิด -------");
+		Console.WriteLine("1.วิธีจำแนก checker มาเก็บ input เช็คทีละตัว");
+		Console.WriteLine("2.ลดขั้นตอน temp มาเช็ค ถ้า \"[\" จะต้องเอา \"]\"");
+		Console.WriteLine("3.เช็คความถูกต้อง checker_count มาควบคุมตำแหน่งของ checker");
+		char[] checker = new char[x.Length];
+		int temp = 0;
+		int open = 0;
+		int close = 0;
+		sbyte checker_count = 0;
+		Console.WriteLine("------- วิธีทำ -------");
+		for (int i = 0; i < x.Length ; i++) {
+			Console.WriteLine("ครั้งที่ " + (i+1));
+			if (checker[0] != '\0') {
+				Console.WriteLine("--> เช็คเครื่องหมายปิด ')', ']', '}':");
+				for (int j = format.Length/2; j < format.Length ; j++) {
+					Console.Write("////รอบ (" + (j-2) + ") : ");
+					if (x[i] == format[format.Length - 1 - temp]) {
+						Console.Write(x[i] + " = " + format[format.Length - 1 - temp] + " found");
+						if (checker_count < checker.Length)
+						{
+							checker[checker_count] = x[i];
+							close += 1;
+							
+							Console.WriteLine("add " + checker[checker_count] + " in checker");
+							Console.WriteLine("////จำนวนการ ปิด (" + close + "|" + (x.Length/2) + ")");
+							if (open == (x.Length/2)) {
+								Console.WriteLine(">>>>> เช็คตำแหน่ง <<<<<");
+								if (close < x.Length) {
+									Console.WriteLine(" ผิด เพราะตำแหนงการปิดไม่ตรงคู่ ---- กรณี 5");
+								}
+							}
+						}
+						break;
+					} else if (i == (x.Length - 1)) {
+						Console.WriteLine("Finish");
+						break;
+					} else {
+						Console.WriteLine("ต้องการ " + format[format.Length - 1 - temp] + " ได้ = " + x[i]);
+						i ++;
+						break;
+					}
+				}
+			}
+			
+			
+			if (open != x.Length/2) {
+				Console.WriteLine("--> เช็คเครื่องหมายเปิด '(', '[', '{':");
+				for (int j = 0; j < format.Length/2 ; j++) {
+					Console.Write("////รอบ (" + (j+1) + ") : ");
+					if (x[i] == format[j]) {
+						Console.Write(x[i] + " = " + format[j] + " found");
+						if (checker_count < checker.Length) {
+							checker[checker_count] = x[i];
+							open += 1;
+							if (open > (x.Length/2)) {
+								Console.WriteLine(" ผิด เพราะการเปิด " + open + " มากกว่าการปิด ---- กรณี 3");
+								return;
+							}
+							Console.WriteLine("add " + checker[checker_count] + " in checker");
+							Console.WriteLine("////จำนวนการ เปิด (" + open + "|" + (x.Length/2) + ")");
+						}
+						temp = j;
+						break;
+					}
+					Console.WriteLine(x[i] + " = " + format[j]);
+					if (j == (format.Length/2)-1 && x[i] != format[j] && close > open) {
+						Console.WriteLine(" ผิด เพราะการปิด " + close + " มากกว่าการเปิด ---- กรณี 4");
+						return;
+					}
+				}
+				checker_count++;
+			}
+		}
+		Console.WriteLine(checker);
+		return;
+	}
+}
+*/
+
+
+
+
+
+/*  Draft 2 เสร็จ เปลี่ยน Algorithm แต่ logic เดิม
+using System;
+
+public class Program
+{
+    public static void Main()
+    {
+        string x;
+        x = Console.ReadLine();
+        function(x);
+    }
+
+    public static void function(string x)
+    {
+        char[] format = { '(', '[', '{', '}', ']', ')' };
+        Console.WriteLine("ขนาด: " + x.Length);
+        Console.WriteLine("mod: " + x.Length % 2);
+
+        // กรณี 1: ความยาวคี่ → ผิด
+        if (x.Length % 2 == 1)
+        {
+            Console.WriteLine("ผิด เพราะต้องเป็นคู่ ถึงจะเปิดปิดครบคู่ ---- กรณี 1");
+            Console.WriteLine("\"" + x + "\" => false");
+            return;
+        }
+
+        Console.WriteLine("จำนวนคู่: " + x.Length / 2);
+
+        // กรณี 2: เริ่มด้วยวงเล็บปิด → ผิด
+        for (int i = format.Length / 2; i < format.Length; i++)
+        {
+            if (format[i] == x[0])
+            {
+                Console.WriteLine("ผิด เพราะต้องเปิดก่อนปิด ---- กรณี 2");
+                Console.WriteLine(x[0] + " = " + format[i]);
+                Console.WriteLine("\"" + x + "\" => false");
+                return;
+            }
+        }
+
+        Console.WriteLine("------- กระบวนการคิด -------");
+        Console.WriteLine("1.จำแนก checker มาเก็บ input เช็คทีละตัว");
+        Console.WriteLine("2.ลดขั้นตอน temp เช็คคู่วงเล็บ");
+        Console.WriteLine("3.เช็คความถูกต้อง checker_count ควบคุมตำแหน่ง");
+
+        char[] checker = new char[x.Length]; // เก็บวงเล็บเปิดที่ยังไม่ปิด
+        int checker_count = 0;               // จำนวนวงเล็บเปิดใน checker
+        int temp = 0;                         // ใช้เก็บ index ของ format ล่าสุด 
+
+        Console.WriteLine("------- วิธีทำ -------");
+
+        for (int i = 0; i < x.Length; i++)
+        {
+            char c = x[i];
+            Console.WriteLine("ครั้งที่ " + (i + 1) + ": " + c);
+
+            // ถ้าเป็นวงเล็บเปิด
+            if (c == '(' || c == '[' || c == '{')
+            {
+                checker[checker_count++] = c;  // เก็บใน checker
+                // เก็บ index ของ format
+                for (int j = 0; j < format.Length / 2; j++)
+                {
+                    if (c == format[j])
+                    {
+                        temp = j;
+                        break;
+                    }
+                }
+                Console.WriteLine("--> เจอวงเล็บเปิด: " + c + " เพิ่มใน checker");
+            }
+            // ถ้าเป็นวงเล็บปิด
+            else if (c == ')' || c == ']' || c == '}')
+            {
+                if (checker_count == 0) // ไม่มีวงเล็บเปิดมาก่อน → ผิด
+                {
+                    Console.WriteLine("\"" + x + "\" => false");
+                    return;
+                }
+
+                char lastOpen = checker[checker_count - 1]; // วงเล็บเปิดล่าสุด
+                // เช็คคู่ถูกต้อง
+                if ((lastOpen == '(' && c == ')') ||
+                    (lastOpen == '[' && c == ']') ||
+                    (lastOpen == '{' && c == '}'))
+                {
+                    checker_count--; // ปิดถูกต้อง → เอาออกจาก checker
+                    Console.WriteLine("--> ปิดถูกต้อง: " + lastOpen + " กับ " + c);
+                }
+                else // ปิดไม่ตรงคู่
+                {
+                    Console.WriteLine("\"" + x + "\" => false");
+                    return;
+                }
+            }
+            // ถ้าเป็นตัวอื่น → ข้าม
+            else
+            {
+                Console.WriteLine("--> ไม่ใช่วงเล็บ: " + c + " ข้าม");
+            }
+        }
+
+        // ตรวจสอบว่า checker ว่างไหม (ครบคู่)
+        if (checker_count == 0)
+        {
+            Console.WriteLine("\"" + x + "\" => true");
+        }
+        else
+        {
+            Console.WriteLine("\"" + x + "\" => false");
+        }
+    }
+}
+*/
