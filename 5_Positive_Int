@@ -7,48 +7,92 @@ public class Program
 	public static void Main()
 	{
 		String x = "";
-		x = Console.ReadLine();
-		if (int.TryParse(x, out int number))
+		int z = 0;
+		
+		//test
+		Console.WriteLine("3008 => " + PositiveInt(3008, 4));
+		Console.WriteLine("1989 => " + PositiveInt(1989, 4));
+		Console.WriteLine("2679 => " + PositiveInt(2679, 4));
+		Console.WriteLine("9163 => " + PositiveInt(9163, 4));
+		
+		Console.WriteLine("//// TEST ////");
+		Console.WriteLine("\"๑๒๓\" => 321");
+		Console.WriteLine("\"123\" => 321");
+		Console.WriteLine("\"abc\" => 321");
+		Console.WriteLine("\"กขค\" => 421");
+		Console.WriteLine("\"Aข\"3 => 321");
+		
+		Console.WriteLine("กรอกข้อความ (พิมพ์ exit เพื่อออก): ");
+		do
 		{
-			//Console.WriteLine("เป็น int: " + number);
-			if (number < 0)
-			number *= -1;
-			//Console.WriteLine(PositiveInt(number, x.Length));
-		}
-		else
-		{
-			int y = 0;
-			//Console.WriteLine("เป็น string: " + x);
-			foreach (char c in x.ToLower())
+			x = Console.ReadLine();
+			
+			if (x.ToLower() == "exit")
+                break;
+
+			if (int.TryParse(x, out int number))
 			{
-				if (c >= 'a' && c <= 'z')
+				//Console.WriteLine("เป็น int: " + number);
+				if (number < 0)
+				number *= -1;
+				z = PositiveInt(number, x.Length);
+				if (z <= 0)
 				{
-					int num = c - 'a' + 1;
-					if (num < 10)
-						y = y * 10 + num;
-					else
-						y = y * 100 + num;
-				}
-				else if (c >= 'ก' && c <= 'ฮ')
-				{
-					int num = c - 'ก' + 1;
-					if (num < 10)
-						y = y * 10 + num;
-					else
-						y = y * 100 + num; 
-				}
-				else if (c >= '0' && c <= '9')
-				{
-					y = y * 10 + (c - '0');
-				}
-				else
-				{
-					//Console.WriteLine("ไม่ใช่ตัวอักษรหรือตัวเลข: " + y);
+					Console.WriteLine(number + " => false");
+				} else {
+					Console.WriteLine(number + " => " + z);
 				}
 			}
-			//Console.WriteLine("รวมตัวเลข: " + y);
-			//Console.WriteLine("เรียงเลขโดดจากมากไปน้อย: " + PositiveInt(y, y.ToString().Length));
-		}
+			else
+			{
+				int y = 0;
+				//Console.WriteLine("เป็น string: " + x);
+				foreach (char c in x.ToLower())
+				{
+					if (c >= 'a' && c <= 'z')
+					{
+						int num = c - 'a' + 1;
+						if (num < 10)
+							y = y * 10 + num;
+						else
+							y = y * 100 + num;
+					}
+					else if (c >= 'ก' && c <= 'ฮ')
+					{
+						int num = c - 'ก' + 1;
+						if (num < 10)
+							y = y * 10 + num;
+						else
+							y = y * 100 + num; 
+					}
+					else if (c >= '0' && c <= '9')
+					{
+						y = y * 10 + (c - '0');
+					}
+					else if (c >= '๑' && c <= '๙')
+					{
+						int num = c - '๑' + 1;
+						if (num < 10)
+							y = y * 10 + num;
+						else
+							y = y * 100 + num;
+					}
+					else
+					{
+						//Console.WriteLine("ไม่ใช่ตัวอักษรหรือตัวเลข: " + y);
+					}
+				}
+				//Console.WriteLine("รวมตัวเลข: " + y);
+				//Console.WriteLine("เรียงเลขโดดจากมากไปน้อย: " + PositiveInt(y, y.ToString().Length));
+				z = PositiveInt(y, y.ToString().Length);
+				if (z <= 0)
+				{
+					Console.WriteLine(number + " => false");
+				} else {
+					Console.WriteLine(number + " => " + z);
+				}
+			}
+		} while (true);
 		
 	}
 	
@@ -61,6 +105,11 @@ public class Program
 		*		   ดังนั้นสร้าง template 0 9 หลัก แล้วดึงค่าโดดมากที่สุดมาทำหลักใหม่ 
 		*   กรณี: 111222333 ในกรณีเลขซํ้า จำเป็นต้องการตัวแปรนับเลขซํ้า จะได้ไม่ต้องเช็คซํ้าตอนเรียง
 		*/
+		if (size > 9)
+		{
+			//Console.WriteLine("ขนาดเกิน Int");
+			return -1;
+		}
 		
 		int[] array = new int[size];
 		int[] checker = {0,0,0,0,0,0,0,0,0,0};
@@ -81,7 +130,7 @@ public class Program
 		y = 0;
 		for (int i = 9; i >= 0; i--)
 		{
-			if (checker[i] == 0)
+			//if (checker[i] == 0)
 				//Console.WriteLine("ข้ามเลขโดด: " + i);
 			while (checker[i] > 0)
 			{
