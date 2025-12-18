@@ -1,0 +1,115 @@
+// ทดสอบ Test On This Website -> https://dotnetfiddle.net/
+
+using System;
+					
+public class Program
+{
+	public static void Main()
+	{
+		string x = "";
+		string[] test_1 = {"TH19", "SG20", "TH2"};
+		string[] test_2 = {"TH10", "TH3Netflix", "TH1", "TH7"};
+		Console.WriteLine("กรอกข้อความ (พิมพ์ exit เพื่อออก): ");
+		Console.WriteLine("[\"" + string.Join("\", \"", test_1) + "\"]" + " => [\"" + string.Join("\", \"", function(test_1)) + "\"]");
+		Console.WriteLine("[\"" + string.Join("\", \"", test_2) + "\"]" + " => [\"" + string.Join("\", \"", function(test_2)) + "\"]");
+		do
+		{
+			x = Console.ReadLine();
+			
+			if (x.ToLower() == "exit")
+                break;
+			// string[] input = x.Split(' '); ไม่ได้แก้ปัญหา ' ' เว้นหายครั้ง
+			string[] input = x.Split(
+				//new char[] { ' ' },
+				(char[])null,
+				StringSplitOptions.RemoveEmptyEntries
+			);
+			Console.Write("[\"" + string.Join("\", \"", input) + "\"] => ");
+
+			string[] result = function(input);
+
+			Console.WriteLine("[\"" + string.Join("\", \"", result) + "\"]");
+		} while (true) ;
+	}
+	
+	// เอา logic มาจากโจทย์ข้อที่ 3 ที่ทำก่อนหน้า เป็นการเช็คค่าทีละตำแหน่ง ถ้า
+	public static string[] function(string[] x)
+	{
+		string[] y = x;
+
+		for (int i = 0; i < y.Length - 1; i++)
+		{
+			// แยก TH19 < TH2 เป็น TH = TH และ 19 > 2
+			//string test_a = "TH19";
+			//string test_b = "TH2";
+			//int test = string.Compare(test_a , test_b);
+			//if (test > 0)
+			//{
+			//	Console.WriteLine(test_a + " > " + test_b);
+			//} else {
+			//	Console.WriteLine(test_a + " < " + test_b);
+			//}
+			
+			for (int j = i + 1; j < y.Length; j++)
+			{
+				int temp = 0;
+				int temp_2 = 0;
+				string temp_a = "";
+				string temp_b = "";
+				int numA = 0;
+				int numB = 0;
+				
+				
+				// A
+				
+				while (temp < y[i].Length && !char.IsDigit(y[i][temp])) // [2] หาเลข แต่ก็แตกอยู่ดีถ้าเจอ T1H1 T1H2
+					temp_a += y[i][temp++];
+				temp_2 = temp;
+				while (temp < y[i].Length && char.IsDigit(y[i][temp]))
+					temp++;
+				if (temp_2 < temp) // มีตัวเลขต่อเนื่อง
+					numA = int.Parse(y[i].Substring(temp_2, temp - temp_2));
+				
+				// B
+				
+				temp = 0;
+				while (temp < y[j].Length && !char.IsDigit(y[j][temp])) 
+					temp_b += y[j][temp++];
+				temp_2 = temp;
+				while (temp < y[j].Length && char.IsDigit(y[j][temp]))
+					temp++;
+				if (temp_2 < temp)
+					numB = int.Parse(y[j].Substring(temp_2, temp - temp_2));
+
+				
+				
+				
+				//if (temp_a < x[i].Length)
+				//	numA = int.Parse(x[i].Substring(temp_a)); // [3] ตัด T1H1 -> 1H1 เจอ H แตก ซับซ้อนเกินไป ต้องหาวิธีใหม่ แต่วิธีนี้ครอบคลุมโจทย์แล้ว
+
+				//if (temp_b < x[j].Length)
+				//	numB = int.Parse(x[j].Substring(temp_b));
+				//if (string.Compare(x[i] , x[j]) > 0) // [1] เจอเลข แตก
+				//{
+				//	    // สลับคำใน matchedWords ด้วย
+				//		string tempWord = x[i];
+				//		x[i] = x[j];
+				//		x[j] = tempWord;
+				//}
+				
+				//if (numA > numB) // จำเป็นต้องเช็ค อักษรด้วย
+				
+				
+				int cmp = string.Compare(temp_a, temp_b); //เช็คอักษรก่อน ยังไง string.Compare ก็เรียง 'อักษร' ให้อยู่แล้ว ในกรณี อักษรเหมือนกัน TH1 = TH2 ให้เช็คเลข | การมี while 2 รอบ เพราะเช็คในกรณี TH1TH2 'อักษร' ผสม 'เลข' หลายชั้น
+                if (cmp > 0 || (cmp == 0 && numA > numB))
+				{
+						// สลับคำใน matchedWords ด้วย
+						string tempWord = y[i];
+						y[i] = y[j];
+						y[j] = tempWord;
+				}
+			}
+		}
+		return y;
+	}
+}
